@@ -1,0 +1,193 @@
+function treenum=treenumr(A,hd,PR1,PR2)
+B=A(2,:);
+L=length(B);
+i=1;
+c=cell(1,i);
+j=1;
+d=1;
+a1=B{1,1};
+c{1,1}=a1;
+b1=c{1,1};
+while(d<=L)
+    a1=B{1,d};
+    if(strcmp(a1,b1))
+       b1=c{j,i};
+       i=i+1;
+       c{j,i}=a1;
+       d=d+1;
+    else
+        j=j+1;
+        i=1;
+       c{j,i}=a1;
+       b1=c{j,i};
+       d=d+1;
+    end
+end
+PR1=c{1,1};
+PR2=c{2,1};
+v=A(1,:);
+[q1,q2]=size(c);
+gam1=cell(2*q1,q2);
+    x1=c{1,1};
+    x2=c{2,1};
+    r=zeros(1,q1);
+    j1=1;
+    for j2=1:q1
+        x1=c{j2,1};
+        while(j1<=q2)
+    if(strcmp(c{j2,j1},x1))
+        r(1,j2)=r(1,j2)+1;
+        j1=j1+1;
+    else 
+        break;
+    end
+        end
+        j1=1;
+    end
+    j=1;
+    l=1;
+    for i=1:2:2*q1-1
+        e=r(1,l);
+        l=l+1;
+        s=v(j:j+e-1);
+        gam1(i,1:e)=s;
+        j=j+e-1;
+    end
+    j=1;
+    l=1;
+     for i=2:2:2*q1
+        e=r(1,l);
+        s=c(l,:);
+        l=l+1;
+
+        gam1(i,1:e)=s(1:e);
+        j=j+e-1;
+    end
+    gam2=cell(1,1);
+    v1=length(v);
+    k=1;
+    L=1;
+    r1=0;
+    for u=1:2:2*q1-1
+        L=L+r1;
+        r1=r(1,k);
+        m=gam1(u,1:r1);
+        gam2(1,L:L+r1-1)=m;
+        k=k+1;
+    end
+gam2(end)=[];
+k=1;
+    L=1;
+    r1=0;
+    rm=0;
+          for u=2:2:2*q1
+        L=L+r1;
+        r1=r(1,k);
+        m=gam1(u,1:r1);
+        gam2(2,L:L+r1-1)=m;
+        k=k+1;
+          end
+          s=1;
+          r1=0;
+          r2=0;
+          L=1;
+          eror=0;
+          i=1;
+          %r1 tedade labele aval r2 tedade label dovom
+             while(i<v1-1)
+              a=gam2{2,i};
+               i=i+1;
+             if(strcmp(a,PR1))
+                 r1=r1+1;
+                 
+             else
+                 r2=r2+1;
+             end
+             if(r1>hd || r2>hd)
+                 gam2{2,i+1}='|';
+                 s(1,L)=i+1;
+                 r1=0;
+                 r2=0;
+                 i=i+1;
+                 L=L+1;
+             end
+             end
+             P=gam2(2,:);
+             L=length(P);
+             ind=zeros(1,1);
+             m=1;
+             for j=1:L
+                 b=P{j};
+                 if(strcmp(b,'|'))
+                    ind(1,m)=j;
+                    m=m+1;
+                 end
+             end
+             m=1;
+             h=1;
+                 P=gam2(1,:);
+                 bazebandi=cell(1,1);
+                 L=length(ind);
+                 for j=1:L
+                     e=ind(j);
+                     a=P(h:e);
+                     MI=a{1};
+                     MA=a{end};
+                     d=[MI MA];
+                     bazebandi{1,m}=d;
+                     m=m+1;
+                     h=e+1;
+                   
+             
+                 end
+             s=[1 s];
+             s1=length(s);
+             L=1;
+             m=1;
+             baze=cell(s1-1,1);
+             a=gam2(2,:);
+             for i=2:s1
+                 b=a(s(i-1):s(i));
+                 baze{i-1,1}=b;
+                m=m+s(i)+1;
+             end
+             L=1;
+             t=zeros(1,2);
+             s1=s1-1;
+             r1=0;
+             r2=0;
+                 for i=1:s1
+                     b=baze{i,1};
+                     b1=length(b);
+                     for j=1:b1
+                         a=b{j};
+                         if(strcmp(a,PR1))
+                             r1=r1+1;
+                         else
+                             r2=r2+1;
+                         end
+                     end
+                     t(L,1)=r1;
+                     t(L,2)=r2;
+                     r1=0;
+                     r2=0;
+                     L=L+1;
+                 end
+                 er=0;
+                    treenum=cell(s1+1,1);
+                    for j=1:s1
+                        r1=t(j,1);
+                        r2=t(j,2);
+                        if(r1>r2)
+                            treenum{j,1}=PR1;
+                            treenum{j,2}=bazebandi{1,j};
+                            er=er+r2;
+                        else
+                            treenum{j,1}=PR2;
+                            treenum{j,2}=bazebandi{1,j};
+
+                            er=er+r1;
+                        end
+                    end
+                    treenum{s1+1,1}=er;
+end
